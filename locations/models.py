@@ -1,4 +1,5 @@
 from django.db import models
+#from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
 class Country(models.Model):
@@ -81,27 +82,29 @@ class Point(models.Model):
     postal_code = models.CharField(_('postal code'), max_length=10, blank=True, null=True)
     street_name = models.CharField(_('street name'), max_length=255)
     street_number = models.CharField(_('street number'), max_length=24)
+    #point = models.PointField(srid=4326) # WGS 1984 projection
+    #objects = models.GeoManager()
 
 class Place(models.Model):
-    city = models.ForeignKey(Municipality)
+    municipality = models.ForeignKey(Municipality)
     district = models.ForeignKey(District, blank=True, null=True)
     point = models.ForeignKey(Point)
 
     @property
     def country(self):
-        return self.city.microregion.mesoregion.state.country
+        return self.municipality.microregion.mesoregion.state.country
 
     @property
     def state(self):
-        return self.city.microregion.mesoregion.state
+        return self.municipality.microregion.mesoregion.state
 
     @property
     def mesoregion(self):
-        return self.city.microregion.mesoregion
+        return self.municipality.microregion.mesoregion
 
     @property
     def microregion(self):
-        return self.city.microregion
+        return self.municipality.microregion
 
     @property
     def latitude(self):
@@ -115,5 +118,5 @@ class Place(models.Model):
     def address(self):
         return u'%s, %s - %s' % (self.point.street_name, self.point.street_number, self.point.city)
 
-    class Meta:
-        abstract = True
+    #class Meta:
+    #    abstract = True
