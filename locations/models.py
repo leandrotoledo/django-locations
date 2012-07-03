@@ -75,18 +75,18 @@ class District(models.Model):
     class Meta:
         ordering = ['district']
         unique_together = ('district', 'municipality')
-        
+
 class Neighborhood(models.Model):
     neighborhood = models.CharField(_(u'neighborhood'), max_length=255)
-    district= models.ForeignKey(District)
-    
+    district = models.ForeignKey(District)
+
     def __unicode__(self):
         return self.neighborhood
-        
+
     class Meta:
         ordering = ['neighborhood']
         unique_together = ('neighborhood', 'district')
-        
+
 class Coordinate(models.Model):
     latitude = models.FloatField(_('latitude'), blank=True, null=True)
     longitude = models.FloatField(_('longitude'), blank=True, null=True)
@@ -98,9 +98,8 @@ class Coordinate(models.Model):
 
 class Place(models.Model):
     municipality = models.ForeignKey(Municipality)
-    district = models.ForeignKey(District, blank=True, null=True)
     neighborhood = models.ForeignKey(Neighborhood, blank=True, null=True)
-    point = models.ForeignKey(Coordinate)
+    coordinate = models.ForeignKey(Coordinate)
 
     @property
     def country(self):
@@ -120,18 +119,14 @@ class Place(models.Model):
 
     @property
     def latitude(self):
-        return self.point.latitude
+        return self.coordinate.latitude
 
     @property
     def longitude(self):
-        return self.point.longitude
+        return self.coordinate.longitude
 
-    @property
-    def address(self):
+    def __unicode__(self):
         return u'{}, {} - {}'.format(
-            self.point.street_name, 
-            self.point.street_number, 
-            self.point.city)
-
-    #class Meta:
-    #    abstract = True
+            self.coordinate.street_name,
+            self.coordinate.street_number,
+            self.municipality)
