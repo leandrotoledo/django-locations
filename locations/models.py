@@ -1,91 +1,90 @@
 from django.db import models
-#from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
 class Country(models.Model):
-    country = models.CharField(_(u'country'), max_length=255, unique=True, db_index=True)
-    code = models.CharField(_(u'code'), max_length=2, unique=True)
+    name = models.CharField(_(u'Country'), max_length=255, unique=True, db_index=True)
+    code = models.CharField(_(u'Code'), max_length=2, unique=True)
 
     def __unicode__(self):
-        return self.country
+        return self.name
 
     class Meta:
-        ordering = ['country']
+        ordering = ['name']
 
 class Region(models.Model):
-    region = models.CharField(_(u'region'), max_length=255, unique=True)
+    name = models.CharField(_(u'Region'), max_length=255, unique=True)
     country = models.ForeignKey(Country)
 
     def __unicode__(self):
-        return self.region
+        return self.name
 
     class Meta:
-        ordering = ['region']
+        ordering = ['name']
 
 class State(models.Model):
-    state = models.CharField(_(u'state'), max_length=255, unique=True, db_index=True)
-    code = models.CharField(_(u'code'), max_length=2, unique=True)
+    name = models.CharField(_(u'State'), max_length=255, unique=True, db_index=True)
+    code = models.CharField(_(u'Code'), max_length=2, unique=True)
     region = models.ForeignKey(Region)
 
     def __unicode__(self):
-        return self.state
+        return self.name
 
     class Meta:
-        ordering = ['state']
+        ordering = ['name']
 
 class MesoRegion(models.Model):
-    mesoregion = models.CharField(_(u'mesoregion'), max_length=255, unique=True)
+    name = models.CharField(_(u'Mesoregion'), max_length=255, unique=True)
     state = models.ForeignKey(State)
 
     def __unicode__(self):
-        return self.mesoregion
+        return self.name
 
     class Meta:
-        ordering = ['mesoregion']
+        ordering = ['name']
 
 class MicroRegion(models.Model):
-    microregion = models.CharField(_(u'microregion'), max_length=255)
+    name = models.CharField(_(u'Microregion'), max_length=255)
     mesoregion =  models.ForeignKey(MesoRegion)
 
     def __unicode__(self):
-        return self.microregion
+        return self.name
 
     class Meta:
-        ordering = ['microregion']
-        unique_together = ('microregion', 'mesoregion')
+        ordering = ['name']
+        unique_together = ('name', 'mesoregion')
 
 class Municipality(models.Model):
-    municipality = models.CharField(_(u'municipality'), max_length=255, db_index=True)
+    name = models.CharField(_(u'Municipality'), max_length=255, db_index=True)
     microregion = models.ForeignKey(MicroRegion)
 
     def __unicode__(self):
-        return self.municipality
+        return self.name
 
     class Meta:
-        ordering = ['municipality']
-        unique_together = ('municipality', 'microregion')
+        ordering = ['name']
+        unique_together = ('name', 'microregion')
 
 class District(models.Model):
-    district = models.CharField(_(u'district'), max_length=255)
+    name = models.CharField(_(u'District'), max_length=255)
     municipality = models.ForeignKey(Municipality)
 
     def __unicode__(self):
-        return self.district
+        return self.name
 
     class Meta:
-        ordering = ['district']
-        unique_together = ('district', 'municipality')
+        ordering = ['name']
+        unique_together = ('name', 'municipality')
 
 class Neighborhood(models.Model):
-    neighborhood = models.CharField(_(u'neighborhood'), max_length=255)
+    name = models.CharField(_(u'Neighborhood'), max_length=255)
     district = models.ForeignKey(District)
 
     def __unicode__(self):
-        return self.neighborhood
+        return self.name
 
     class Meta:
-        ordering = ['neighborhood']
-        unique_together = ('neighborhood', 'district')
+        ordering = ['name']
+        unique_together = ('name', 'district')
 
 class Coordinate(models.Model):
     latitude = models.FloatField(_('latitude'), blank=True, null=True)
@@ -93,8 +92,6 @@ class Coordinate(models.Model):
     postal_code = models.CharField(_('postal code'), max_length=10, blank=True, null=True)
     street_name = models.CharField(_('street name'), max_length=255)
     street_number = models.CharField(_('street number'), max_length=24)
-    #point = models.PointField(srid=4326) # WGS 1984 projection
-    #objects = models.GeoManager()
 
 class Place(models.Model):
     municipality = models.ForeignKey(Municipality)
