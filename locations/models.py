@@ -105,9 +105,6 @@ class Neighborhood(models.Model):
 class Coordinate(models.Model):
     latitude = models.FloatField(_('latitude'), blank=True, null=True)
     longitude = models.FloatField(_('longitude'), blank=True, null=True)
-    postal_code = models.CharField(_('postal code'), max_length=10, blank=True, null=True)
-    street_name = models.CharField(_('street name'), max_length=255)
-    street_number = models.CharField(_('street number'), max_length=24)
     
     class Meta:
         verbose_name = _('coordinate')
@@ -117,6 +114,9 @@ class Place(models.Model):
     municipality = models.ForeignKey(Municipality)
     neighborhood = models.ForeignKey(Neighborhood, blank=True, null=True)
     coordinate = models.ForeignKey(Coordinate)
+    postal_code = models.CharField(_('postal code'), max_length=10, blank=True, null=True)
+    street_name = models.CharField(_('street name'), max_length=255)
+    street_number = models.CharField(_('street number'), max_length=24)
 
     @property
     def country(self):
